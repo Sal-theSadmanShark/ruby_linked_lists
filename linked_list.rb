@@ -26,7 +26,7 @@ class LinkedList
   end
 
   def list_has_tail?
-    temp.nil?
+    tail.nil? && temp.nil?
   end
 
   def empty_list_error
@@ -46,6 +46,7 @@ class LinkedList
     current_index = 0
     current_node = head
     until eval condition_string
+      break if current_node == tail
       current_node = current_node.next_node
       current_index += 1
     end
@@ -88,7 +89,11 @@ class LinkedList
   end
 
   def at(index)              # return the item at index
-    loop_nodes_until("current_index == #{index}").last.value
+    if index >= size
+      index_error
+    else
+      loop_nodes_until("current_index == #{index}").last.value
+    end
   end
 
   def pop                    # delete last item from list
@@ -109,15 +114,18 @@ class LinkedList
   end
 
   def find(value)            # find the index of item
-    loop_nodes_until("current_node.value == #{value}").first
+    return -1 unless contains?(value)
+    @temp = value
+    loop_nodes_until('current_node.value == temp').first
   end
 
   def contains?(value)       # check if list contains item
     return true if tail.value == value
-    loop_nodes_until("current_node.value == #{value} || current_node == tail").last != tail
+    @temp = value
+    loop_nodes_until('current_node.value == temp').last != tail
   end
 
-  def to_s                   # print he list as a strinf of (value) -> (value)
+  def to_s                   # print the list as a strinf of (value) -> (value)
     current_node = head
     list_string = "(#{head.value}) -> "
     until current_node == tail || list_has_tail?
